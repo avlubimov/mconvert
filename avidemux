@@ -1,0 +1,97 @@
+#!/bin/bash
+
+project="not set"
+destination="not set"
+ext="mp4"
+program="/usr/bin/avidemux2_cli --force-unpack  --autoindex  --force-b-frame --force-alt-h264  --rebuild-index"
+editor="/usr/bin/avidemux2_qt4 --force-unpack  --autoindex  --force-b-frame --force-alt-h264  --rebuild-index "
+mode="batch"
+
+
+
+function usage
+{
+    echo ...................................
+    echo "usage: $0 -s project -d destnation   file1.avi file2.mkv file3.mp4 ..."
+    echo project - aviemux project file
+    echo destination - destination directory
+    echo ...................................
+}
+
+
+while [ "${1:0:1}" == "-" ]; do
+    case $1 in
+        -p | --project )         shift
+                                project=$1
+                                ;;
+        --program )            shift
+                                program=$1
+                                ;;
+        --ext )         shift
+                                ext=$1
+                                ;;
+        -d | --destination )    shift
+                                destination=$1
+                                ;;
+
+        -e | --edit )           mode="edit"
+                                ;;
+
+        -h | --help )           usage
+                                exit
+                                ;;
+        *)           usage
+                                exit 1
+                                ;;
+    esac
+    shift
+done
+
+if  ! [[ -f ${project} ]]; then
+    echo "project file \"${project}\" not exists"
+    exit 1
+fi
+
+# mode edit
+if  [[ ${mode} == "edit" ]]; then
+    ${editor} --load "$1" --run "${project}" 
+    exit
+fi
+
+
+if  ! [[  -d ${destination} ]]; then
+    echo "destination directory \"${destination}\" not exists"
+    exit 1
+fi
+
+
+for i in $*; do
+
+if  ! [[ -r ${i} ]]; then
+    echo "file \"${i}\" not readable, so skip"
+    continue
+fi
+
+dst=${destination}/${i}.${ext}
+echo "Processing ${i} starting"
+${program} --load "$i" --run "${project}" --save "${dst}" --quit 
+echo "${dst} done"
+
+done
+
+
+
+
+
+
+
+#VAR="batchfiles.txt"
+#ls *.mp4 | sort > $VAR # Collect the files in the current directory
+#cat $VAR | while read line; do  # Loop read the filenames from the file
+#  INPUT=$(echo ${line}) # Grab the next new filename
+#  OUTPUT=${INPUT%.*4} # Remove shortest match of characters between the '. ' and the '4' at end of string
+#  OUTPUT+=".avi" # Append new extension
+#  avidemux2 --force-alt-h264 --load "$INPUT" --run something.js --save "$OUTPUT" --quit 
+#done
+#rm $VAR # Remove the text file with the file names
+
