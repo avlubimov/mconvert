@@ -2,20 +2,17 @@
 module('getopt', package.seeall)
 
 
-params = {};
-params["mode"] = {["-"]="m",["--"]="mode",["default"]="convert", ["require"]=true, ["help"]="Operating mode.  Can be edit or convert"};
-params["template"]={["-"]="t",["--"]="template", ["default"]=nil, ["require"]=true, ["help"]="Convert template"};
-params["help"]={["-"]="h",["--"]="help", ["help"]="Show help message"};
 
+s_options="";
 
-options="";
 
 for i,j in pairs(params) do
-    options = options .. j["-"];
+    s_options = s_options .. j["-"];
 end
 
+print (s_options);
 
-function hparam (param)
+function help_string (param,s_options)
     result="";
     for  tmp,key in pairs {"-","--"} do
 	if (param[key] ~= nil) then
@@ -30,18 +27,18 @@ function hparam (param)
     return result;
 
 end
-    
+
 
 function usage ()
     print (string.format ("Usage %s options file.mp4 file.out", arg[0]));
     for i,j in pairs (params) do
-	print (hparam(j));
+	print (help_string(j));
     end
 end
 
 
 
-function getopt( arg)
+function getopt(arg,options)
   local tab = {}
   for k, v in ipairs(arg) do
     if string.sub( v, 1, 2) == "--" then
