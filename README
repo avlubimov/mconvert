@@ -1,0 +1,14 @@
+MConvert is small utility for batch processing media files with avidemux.
+
+It can be convert one video/audio codec or container to another. Also posible to use audio/video filters 
+and many other features from avidemux.
+
+Generic process can be splited to two parts - edit project and convert files.
+
+First, use  mconvert -e project.js sample.avi to edit project.js
+
+Second, use mconvert -c project.js -o dst_directory file1.avi file2.avi ... 
+
+or
+
+mconvert -c project.js -o dst_media_file mediafile1
